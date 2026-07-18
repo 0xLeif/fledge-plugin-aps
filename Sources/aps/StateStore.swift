@@ -66,7 +66,14 @@ public final class StateStore {
 #else
             return ""
 #endif
+        case .profileName:
+            return Application.slice(\.profile, \.name).value
         }
+    }
+
+    /// `ProfileDocument.name` read through AppState `Slice` (same path as `get(.profileName)`).
+    public func profileName() -> String {
+        Application.slice(\.profile, \.name).value
     }
 
     public func profileDocument() throws -> ProfileDocument {
@@ -125,6 +132,17 @@ public final class StateStore {
 #else
             throw APSError.keychainUnavailable
 #endif
+        case .profileName:
+            // Refresh FileState from disk before Slice write so a stale cached
+            // ProfileDocument cannot clobber a newer on-disk version.
+            try Self.refreshProfileFileStateFromDisk()
+            let expectedVersion = (try? Self.readProfileFromDisk())?.version ?? 0
+            var slice = Application.slice(\.profile, \.name)
+            slice.value = value
+            let onDisk = try Self.readProfileFromDisk()
+            guard onDisk.name == value, onDisk.version == expectedVersion else {
+                throw APSError.persistenceFailed(key: .profileName)
+            }
         }
         stats.recordMutation(key: key)
     }
@@ -148,6 +166,10 @@ public final class StateStore {
 #else
             break
 #endif
+        case .profileName:
+            try? Self.refreshProfileFileStateFromDisk()
+            var slice = Application.slice(\.profile, \.name)
+            slice.value = ""
         }
         stats.recordMutation(key: key)
     }
@@ -267,7 +289,7 @@ public final class StateStore {
                 return (try? encodeProfile(document)) ?? get(key)
             }
             return get(key)
-        case .counter, .message, .flag, .secret:
+        case .counter, .message, .flag, .secret, .profileName:
             return get(key)
         }
     }
@@ -293,6 +315,22 @@ public final class StateStore {
         } catch {
             throw APSError.persistenceFailed(key: .profile)
         }
+    }
+
+    /// Loads `profile.json` into AppState's FileState cache when present.
+    ///
+    /// Slice writes mutate the cached parent document; without this refresh, a
+    /// long-lived `StateStore` can preserve a stale `version` after another
+    /// process updated the file.
+    private static func refreshProfileFileStateFromDisk() throws {
+        let fresh: ProfileDocument
+        do {
+            fresh = try readProfileFromDisk()
+        } catch {
+            fresh = ProfileDocument(name: "", version: 0)
+        }
+        var parent = Application.fileState(\.profile)
+        parent.value = fresh
     }
 
     private static func fileStateURL(filename: String) -> URL {
@@ -324,6 +362,8 @@ public final class StateStore {
 #if canImport(Security)
             _ = Application.secureState(\.secret).value
 #endif
+        case .profileName:
+            _ = Application.slice(\.profile, \.name).value
         }
     }
 
