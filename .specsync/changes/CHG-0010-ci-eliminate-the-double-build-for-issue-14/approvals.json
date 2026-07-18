@@ -1,0 +1,19 @@
+{
+  "approvals": [
+    {
+      "gate": "definition",
+      "actor": "agent:cursor",
+      "timestamp": 1784405774,
+      "digest": "36ad6788d34d58f8bdcf39e67a8f44fdba54ac7f513570c6eaf5e6aace6b68b7",
+      "note": "Approve CI double-build elimination."
+    },
+    {
+      "gate": "acceptance",
+      "actor": "agent:cursor",
+      "timestamp": 1784405791,
+      "digest": "561c9a2b468c43660b744c5206c8cf9ac66c1f31e06dba1ffb3ac04ef7a0b32c",
+      "note": "Accept CI single-config jobs."
+    }
+  ],
+  "reopenings": []
+}

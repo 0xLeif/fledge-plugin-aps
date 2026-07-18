@@ -25,10 +25,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: Swift version
         run: swift --version
-      - name: Build (release)
-        run: swift build -c release
-      - name: Test
-        run: swift test
+      - name: Test (release)
+        run: swift test -c release
       - name: Smoke CLI
         env:
           APS_BIN: .build/release/aps

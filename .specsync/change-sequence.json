@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "sequence": 9,
-  "id": "CHG-0009-spike-modelstate-swiftdata-feasibility-findings-for-issue-20",
+  "sequence": 10,
+  "id": "CHG-0010-ci-eliminate-the-double-build-for-issue-14",
   "acknowledged_collisions": []
 }

@@ -31,10 +31,7 @@ jobs:
       - name: Swift version
         run: swift --version
 
-      - name: Build
-        run: swift build -c debug
-
-      - name: Test
+      - name: Test (debug)
         run: swift test
 
       - name: Smoke CLI
