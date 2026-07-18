@@ -1,0 +1,26 @@
+{
+  "approvals": [
+    {
+      "gate": "definition",
+      "actor": "agent:cursor",
+      "timestamp": 1784411514,
+      "digest": "a5191d836270b9ecaa81c40dc29bbf0c0ef641a8cf7053a72edbf6119ef16607",
+      "note": "Loud torn FileState reads for issue 38."
+    },
+    {
+      "gate": "definition",
+      "actor": "agent:cursor",
+      "timestamp": 1784411603,
+      "digest": "2ce0d16b39555da39844a51a6ba4f24ee62c65751cf41af3d664905ba89b4158",
+      "note": "Re-approve after MODIFIED-only requirement deltas."
+    },
+    {
+      "gate": "acceptance",
+      "actor": "agent:cursor",
+      "timestamp": 1784411627,
+      "digest": "f8838f9f5c4086853da349f952eb35f8fc220225aea8a88ebf4d81e326b1d219",
+      "note": "Accepted multi-writer torn-read hardening."
+    }
+  ],
+  "reopenings": []
+}

@@ -1,9 +1,9 @@
 {
-  "timestamp": 1784411869,
+  "timestamp": 1784411616,
   "commit": "1d58872f43f0fb9838bc72c2c0b3b4c9ee7f75ac",
-  "contract_digest": "55d93919744f623103fb1d77e2cdb833a2d95075e3fc62ac31c6d09d506223b6",
-  "workspace_digest": "23acb1cbd9ea986147b8142087afeffff5c756e27d3dbba4349f6718dfeb93ab",
-  "acceptance_input_digest": "6182f33d94672ff2c33da2e3aba893971fb86fe832423e67cebd894cae36c01c",
+  "contract_digest": "2ce0d16b39555da39844a51a6ba4f24ee62c65751cf41af3d664905ba89b4158",
+  "workspace_digest": "b63915e99330c7282a8f5379efc68296196496325f4938ce8be81a5b8ef61a54",
+  "acceptance_input_digest": "0e7db9088a91ac708544b607a51224324580ae2ad7fdadb52ce92fb152e195b7",
   "acceptance_manifest": {
     "schema_version": 1,
     "entries": [
@@ -11,8 +11,8 @@
         "path": ".specsync/change-sequence.json",
         "kind": "file",
         "mode": 33188,
-        "payload_digest": "48d156cde46751f23dfe9c134d35c95faf3b8f173783dfb0b60872b118ab5cfb",
-        "entry_digest": "36a1e742298c093ae2ba5dd696140c37e443aacf8c11fc98903d3f57cab409ad",
+        "payload_digest": "01a2570bb01e7e02aaed90e013bff057b79c0e69b6cd41588f73d929bb0832d0",
+        "entry_digest": "c1b975fb057e851d0eddd07a206545855bc4a0b74a509145e784874f8c00c682",
         "owners": [
           "@exact:delivery"
         ]
@@ -188,7 +188,9 @@
     }
   ],
   "requirement_ids": [
-    "REQ-aps-cli-016",
-    "REQ-state-store-014"
+    "REQ-aps-cli-005",
+    "REQ-aps-cli-017",
+    "REQ-state-store-004",
+    "REQ-state-store-015"
   ]
 }
