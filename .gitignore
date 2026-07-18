@@ -1,0 +1,14 @@
+.DS_Store
+/.build
+/.swiftpm
+/*.xcodeproj
+xcuserdata/
+DerivedData/
+.swiftpm/configuration/registries.json
+.swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata
+.netrc
+*.swp
+*~
+
+# CorvidLabs trust toolchain
+augur.json
