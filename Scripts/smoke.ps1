@@ -87,26 +87,26 @@ Assert-Match $keys 'profile' 'keys profile'
 Assert-Match $keys 'secret' 'keys secret'
 
 $keysJson = Invoke-ApsOk keys --json
-Assert-Match $keysJson '"key" : "profile"' 'keys json profile'
-Assert-Match $keysJson '"key" : "secret"' 'keys json secret'
+Assert-Match $keysJson '"key":"profile"' 'keys json profile'
+Assert-Match $keysJson '"key":"secret"' 'keys json secret'
 
 # `set` prints the value; State is process-local so don't expect get in a new process.
 Assert-Equal '11' (Invoke-ApsOk set counter 11) 'set counter'
 Assert-Equal 'smoke' (Invoke-ApsOk set message smoke) 'set message'
-Assert-Match (Invoke-ApsOk set counter 11 --json) '"value" : 11' 'set counter json'
+Assert-Match (Invoke-ApsOk set counter 11 --json) '"value":11' 'set counter json'
 
 # StoredState / FileState must survive process boundaries.
 $null = Invoke-ApsOk set flag true
 Assert-Equal 'true' (Invoke-ApsOk get flag) 'get flag'
-Assert-Match (Invoke-ApsOk get flag --json) '"value" : true' 'get flag json'
+Assert-Match (Invoke-ApsOk get flag --json) '"value":true' 'get flag json'
 
 $null = Invoke-ApsOk set note smoke-note
 Assert-Equal 'smoke-note' (Invoke-ApsOk get note) 'get note'
 
 $null = Invoke-ApsOk set profile '{"name":"smoke","version":2}'
 $profileJson = Invoke-ApsOk get profile --json
-Assert-Match $profileJson '"name" : "smoke"' 'profile name'
-Assert-Match $profileJson '"version" : 2' 'profile version'
+Assert-Match $profileJson '"name":"smoke"' 'profile name'
+Assert-Match $profileJson '"version":2' 'profile version'
 
 # SecureState / Keychain smoke temporarily disabled (Keychain prompts / hangs).
 # Re-enable with: APS_SMOKE_SECURESTATE=1
@@ -114,7 +114,7 @@ if ($env:APS_SMOKE_SECURESTATE -eq '1') {
     if ($IsMacOS) {
         $null = Invoke-ApsOk set secret smoke-secret
         Assert-Equal 'smoke-secret' (Invoke-ApsOk get secret) 'get secret'
-        Assert-Match (Invoke-ApsOk get secret --json) '"storage" : "SecureState"' 'secret storage'
+        Assert-Match (Invoke-ApsOk get secret --json) '"storage":"SecureState"' 'secret storage'
         $null = Invoke-ApsOk reset secret
         $after = Invoke-ApsOk get secret
         if (-not [string]::IsNullOrEmpty($after)) {
@@ -132,10 +132,10 @@ $null = Invoke-ApsOk set note other-root --state-dir $other
 Assert-Equal 'other-root' (Invoke-ApsOk get note --state-dir $other) 'state-dir get'
 Assert-Equal 'smoke-note' (Invoke-ApsOk get note) 'default home note unchanged'
 
-Assert-Match (Invoke-ApsOk dump) '"key" : "flag"' 'dump flag'
+Assert-Match (Invoke-ApsOk dump) '"key":"flag"' 'dump flag'
 $dumpJson = Invoke-ApsOk dump --json
-Assert-Match $dumpJson '"key" : "profile"' 'dump json profile'
-Assert-Match $dumpJson '"key" : "secret"' 'dump json secret'
+Assert-Match $dumpJson '"key":"profile"' 'dump json profile'
+Assert-Match $dumpJson '"key":"secret"' 'dump json secret'
 
 $null = Invoke-ApsOk reset flag
 Assert-Equal 'false' (Invoke-ApsOk get flag) 'reset flag'
@@ -146,7 +146,7 @@ if (-not [string]::IsNullOrEmpty($noteAfter)) {
     throw "expected empty note after reset, got '$noteAfter'"
 }
 
-Assert-Match (Invoke-ApsOk reset profile --json) '"reset" : "key"' 'reset profile json'
+Assert-Match (Invoke-ApsOk reset profile --json) '"reset":"key"' 'reset profile json'
 
 $null = Invoke-ApsOk reset --all
 Assert-Equal 'false' (Invoke-ApsOk get flag) 'reset all flag'
@@ -159,7 +159,7 @@ if (-not [string]::IsNullOrEmpty($noteAll)) {
 $null = Invoke-ApsOk watch counter --count 1 --timeout 2
 
 # ObservedDependency stats command (process-local; fresh process starts at 0).
-Assert-Match (Invoke-ApsOk stats --json) '"mutationCount" : 0' 'stats json'
+Assert-Match (Invoke-ApsOk stats --json) '"mutationCount":0' 'stats json'
 $null = Invoke-ApsOk stats --watch --count 1 --timeout 2
 
 # Invalid values should fail clearly.
