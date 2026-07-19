@@ -130,6 +130,15 @@ swift run aps stats --json
 
 `watch` uses Swift Observation for in-process updates and polls as a fallback so disk-backed `FileState` / `StoredState` changes can still surface, including updates written by another `aps` process. For `note` and `profile`, polling reads the JSON files directly so AppState's FileState cache cannot hide cross-process writes.
 
+### Output modes (human and agent)
+
+`aps` follows the git porcelain rule: **human output may be pretty, machine output is a frozen contract.**
+
+- On a TTY: `keys` renders an aligned table with a bold header, JSON is pretty-printed, and semantic color is used sparingly (set `NO_COLOR` to disable).
+- When piped: `keys` is byte-stable TSV with no ANSI escapes, and all JSON is single-line compact.
+- `watch --json` is an alias for `--jsonl`; `keys --quiet` prints key names only (handy for `xargs aps reset`).
+- Shell completions: `aps --generate-completion-script bash|zsh|fish` (install into your shell's completion directory).
+
 ### Multi-process FileState semantics
 
 `aps` expects **one writer per key** at a time. Concurrent `aps set` on the same FileState key (`note` / `profile`) is last-writer-wins and is not locked: AppState writes files non-atomically, so two writers can tear a JSON file.

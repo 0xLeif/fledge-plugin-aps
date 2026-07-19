@@ -63,7 +63,7 @@ extension Aps {
                         storage: key.storage,
                         value: try CLIOutput.typedValue(for: key, store: store)
                     )
-                    print(try CLIOutput.encodePretty(payload))
+                    print(try CLIOutput.encodeJSON(payload))
                 } else {
                     print(store.get(key))
                 }
@@ -101,7 +101,7 @@ extension Aps {
                         storage: key.storage,
                         value: try CLIOutput.typedValue(for: key, store: store)
                     )
-                    print(try CLIOutput.encodePretty(payload))
+                    print(try CLIOutput.encodeJSON(payload))
                 } else {
                     print(store.get(key))
                 }
@@ -129,6 +129,9 @@ extension Aps {
         @Flag(name: .long, help: "Emit one JSON object per line.")
         var jsonl: Bool = false
 
+        @Flag(name: .long, help: "Alias for --jsonl (flag symmetry with other commands).")
+        var json: Bool = false
+
         @Option(name: .long, help: "Override state directory (takes precedence over APS_HOME).")
         var stateDir: String?
 
@@ -136,6 +139,7 @@ extension Aps {
             try onMainThread {
                 boot(stateDir: stateDir)
                 let store = StateStore()
+                let jsonl = jsonl || json
                 let deadline = timeout.map { Date().addingTimeInterval($0) }
                 var emitted = 0
 
@@ -215,8 +219,15 @@ extension Aps {
         @Flag(name: .long, help: "Emit machine-readable JSON.")
         var json: Bool = false
 
+        @Flag(name: .long, help: "Print only key names, one per line.")
+        var quiet: Bool = false
+
         func run() throws {
-            if json {
+            if quiet {
+                for key in DemoKey.allCases {
+                    print(key.rawValue)
+                }
+            } else if json {
                 let payload = CLIOutput.KeysPayload(
                     keys: DemoKey.allCases.map {
                         CLIOutput.KeyInfo(
@@ -227,7 +238,15 @@ extension Aps {
                         )
                     }
                 )
-                print(try CLIOutput.encodePretty(payload))
+                print(try CLIOutput.encodeJSON(payload))
+            } else if TTY.stdoutIsTTY {
+                // Human table; piped output below stays byte-stable TSV.
+                print(TTY.table(
+                    header: ["KEY", "TYPE", "STORAGE", "DESCRIPTION"],
+                    rows: DemoKey.allCases.map {
+                        [$0.rawValue, $0.valueType, $0.storage, $0.detail]
+                    }
+                ))
             } else {
                 print("KEY\tTYPE\tSTORAGE\tDESCRIPTION")
                 for key in DemoKey.allCases {
@@ -286,7 +305,7 @@ extension Aps {
         private static func printSnapshot(_ snapshot: DemoStatsSnapshot, json: Bool, pretty: Bool) {
             if json {
                 let payload = CLIOutput.StatsPayload(snapshot: snapshot)
-                if pretty, let text = try? CLIOutput.encodePretty(payload) {
+                if let text = try? CLIOutput.encodeJSON(payload), pretty {
                     print(text)
                 } else if let line = try? CLIOutput.encodeLine(payload) {
                     CLIOutput.writeLine(line)
@@ -328,7 +347,7 @@ extension Aps {
                         store.resetAll()
                         if options.json {
                             let payload = CLIOutput.ResetPayload(reset: "all", key: nil, value: nil)
-                            print(try CLIOutput.encodePretty(payload))
+                            print(try CLIOutput.encodeJSON(payload))
                         } else {
                             print("reset all keys")
                         }
@@ -340,7 +359,7 @@ extension Aps {
                                 key: key.rawValue,
                                 value: try CLIOutput.typedValue(for: key, store: store)
                             )
-                            print(try CLIOutput.encodePretty(payload))
+                            print(try CLIOutput.encodeJSON(payload))
                         } else {
                             print(store.get(key))
                         }

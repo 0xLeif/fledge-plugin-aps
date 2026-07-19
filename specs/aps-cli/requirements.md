@@ -135,3 +135,14 @@ Acceptance Criteria
 - `APS_HOME` resolution tests mutate the process environment with a portable helper (not POSIX-only `setenv`).
 - `specs/aps-cli/testing.md` and README document the Windows test + smoke path.
 
+
+### REQ-aps-cli-019
+
+Human output SHALL be TTY-aware under the git porcelain rule: pretty for interactive humans, byte-stable plain text when piped. JSON SHALL be pretty on TTY and compact when piped.
+
+Acceptance Criteria
+- Piped `keys` output is the TSV form with no ANSI escapes; TTY gets an aligned table with bold headers and semantic color honoring NO_COLOR.
+- `dump` / `--json` payloads are single-line compact JSON off-TTY and pretty on TTY.
+- `watch --json` behaves as `--jsonl`; `keys --quiet` prints key names only.
+- Shell completion scripts (bash/zsh/fish) are documented in README.
+

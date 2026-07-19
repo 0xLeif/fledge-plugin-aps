@@ -1,11 +1,12 @@
 ---
 module: aps-cli
-version: 20
+version: 21
 status: active
 files:
   - Sources/aps/Aps.swift
   - Sources/aps/CLIOutput.swift
   - Sources/aps/DemoKey.swift
+  - Sources/aps/TTY.swift
 db_tables: []
 depends_on:
   - state-store
@@ -56,6 +57,12 @@ agents can get, set, watch, dump, list, and reset typed application state.
 | `exitCode` | sysexits-aligned process exit code. |
 | `hint` | Actionable next step in the error envelope. |
 
+Command output modes (informational): human output is TTY-aware (aligned
+`keys` table, bold headers, semantic color, NO_COLOR respected); piped output
+is byte-stable plain text. JSON is pretty on TTY and compact when piped (gh
+rule). `watch --json` is an alias for `--jsonl`; `keys --quiet` prints key
+names only. Machine shapes are additive-only contracts; human text may evolve.
+
 ## Invariants
 
 1. The CLI entry point runs on the real main thread so AppState
@@ -63,6 +70,7 @@ agents can get, set, watch, dump, list, and reset typed application state.
 2. stdout for `get` / `set` / `watch` / `reset <key>` is only the value line(s);
    stdout stays empty on error; help uses ArgumentParser defaults and domain
    errors use the Error Cases contract (human line plus optional JSON envelope).
+   Piped output stays plain: no ANSI styling and compact JSON off-TTY.
 3. `State` keys are process-local; a new process must not be expected to retain
    `counter` or `message`.
 4. `watch` must flush each printed value immediately when stdout is not a TTY.
@@ -151,3 +159,4 @@ Exit codes (sysexits-aligned):
 | 2026-07-18 | CHG-0020-prove-swift-test-on-windows-latest-and-portable-aps-home-env-tests-for-issue-46: Prove swift test on windows-latest and portable APS_HOME env tests for issue 46 |
 | 2026-07-18 | CHG-0021-error-contract-exit-code-taxonomy-and-json-error-envelope-issue-31-rebuilt-on: Error contract: exit-code taxonomy and JSON error envelope (issue 31, rebuilt on corruptState main) |
 | 2026-07-19 | CHG-0021-error-contract-exit-code-taxonomy-and-json-error-envelope-issue-31-rebuilt-on: Error contract: exit-code taxonomy and JSON error envelope (issue 31, rebuilt on corruptState main) |
+| 2026-07-19 | CHG-0022-tty-aware-output-under-the-git-porcelain-rule-issue-33: TTY-aware output under the git porcelain rule (issue 33) |

@@ -97,6 +97,23 @@ enum CLIOutput {
         return string
     }
 
+    /// TTY-aware JSON (gh rule): pretty when interactive, compact when piped.
+    /// Machine consumers always get valid JSON either way; only whitespace adapts.
+    static func encodeJSON<T: Encodable>(_ value: T) throws -> String {
+        let encoder = JSONEncoder()
+        var formatting: JSONEncoder.OutputFormatting = [.sortedKeys, .withoutEscapingSlashes]
+        if TTY.stdoutIsTTY {
+            formatting.insert(.prettyPrinted)
+        }
+        encoder.outputFormatting = formatting
+        encoder.dateEncodingStrategy = .iso8601
+        let data = try encoder.encode(value)
+        guard let string = String(data: data, encoding: .utf8) else {
+            throw APSError.encodingFailed
+        }
+        return string
+    }
+
     static func encodeLine<T: Encodable>(_ value: T) throws -> String {
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.sortedKeys, .withoutEscapingSlashes]

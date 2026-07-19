@@ -260,11 +260,11 @@ final class APSTests: XCTestCase {
         try store.set(.profile, value: #"{"name":"x","version":1}"#)
 
         let json = try store.dump()
-        XCTAssertTrue(json.contains("\"key\" : \"counter\""))
-        XCTAssertTrue(json.contains("\"value\" : 3"))
-        XCTAssertTrue(json.contains("\"key\" : \"message\""))
-        XCTAssertTrue(json.contains("\"key\" : \"profile\""))
-        XCTAssertTrue(json.contains("\"storage\" : \"FileState\""))
+        XCTAssertTrue(json.contains("\"key\":\"counter\""))
+        XCTAssertTrue(json.contains("\"value\":3"))
+        XCTAssertTrue(json.contains("\"key\":\"message\""))
+        XCTAssertTrue(json.contains("\"key\":\"profile\""))
+        XCTAssertTrue(json.contains("\"storage\":\"FileState\""))
         XCTAssertTrue(json.contains("timestamp"))
     }
 
@@ -752,5 +752,49 @@ final class APSTests: XCTestCase {
             }
             XCTAssertEqual((error as? APSError)?.exitCode, 65)
         }
+    }
+
+    func testTTYTableAlignsColumnsAndBoldsHeader() {
+        let table = TTY.table(
+            header: ["KEY", "TYPE", "STORAGE"],
+            rows: [
+                ["counter", "Int", "State"],
+                ["profileName", "String", "Slice"],
+            ]
+        )
+        let lines = table.split(separator: "\n").map(String.init)
+        XCTAssertEqual(lines.count, 3)
+        // Column 2 starts at the same offset on every line (widest KEY + 2).
+        let columnTwoOffset = max("KEY".count, "counter".count, "profileName".count) + 2
+        let expected = [
+            "TYPE",
+            "Int",
+            "String",
+        ]
+        for (line, word) in zip(lines, expected) {
+            let index = line.range(of: word)?.lowerBound
+            XCTAssertEqual(index.map { line.distance(from: line.startIndex, to: $0) }, columnTwoOffset)
+        }
+        // Piped test environment: no ANSI escapes are emitted.
+        XCTAssertFalse(table.contains("\u{1B}"), "no ANSI when color is disabled")
+    }
+
+    func testStyleIsIdentityWhenColorDisabled() {
+        XCTAssertEqual(TTY.Style.red("err"), "err")
+        XCTAssertEqual(TTY.Style.bold("h"), "h")
+    }
+
+    func testEncodeJSONIsCompactOffTTY() throws {
+        let payload = CLIOutput.KeyInfo(key: "counter", type: "Int", storage: "State", detail: "d")
+        let json = try CLIOutput.encodeJSON(payload)
+        XCTAssertFalse(json.contains("\n"), "piped JSON must be compact single-line")
+        XCTAssertTrue(json.contains("\"key\":\"counter\""))
+    }
+
+    func testEncodeAutoIsCompactOffTTY() throws {
+        let coding = JSONCoding()
+        let json = try coding.encodeAuto(["ok": true])
+        XCTAssertFalse(json.contains("\n"))
+        XCTAssertTrue(json.contains("\"ok\":true"))
     }
 }

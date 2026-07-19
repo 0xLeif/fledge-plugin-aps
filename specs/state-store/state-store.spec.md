@@ -1,6 +1,6 @@
 ---
 module: state-store
-version: 17
+version: 19
 status: active
 files:
   - Sources/aps/StateStore.swift
@@ -29,7 +29,7 @@ non-UI use.
 | `set` | Parses and writes a demo key value; records a stats mutation. |
 | `reset` | Restores one demo key to its initial value; records a stats mutation. |
 | `resetAll` | Restores every demo key. |
-| `dump` | Pretty JSON snapshot with typed values. |
+| `dump` | JSON snapshot with typed values (pretty on TTY, compact when piped). |
 | `watchBlocking` | Observation + polling watch loop for demo keys. |
 | `watchStatsBlocking` | Combine + polling watch loop for ObservedDependency stats. |
 | `statsSnapshot` | Immutable view of DemoStats counters. |
@@ -47,6 +47,7 @@ non-UI use.
 | `SystemAPSClock` | Date-backed clock. |
 | `JSONCoding` | Shared encode helpers for dump output. |
 | `encodePretty` | Pretty JSON encode helper. |
+| `encodeAuto` | TTY-aware JSON encode helper (pretty on TTY, compact when piped). |
 | `DemoStats` | ObservableObject mutation-stats dependency. |
 | `mutationCount` | Number of recorded set/reset mutations. |
 | `lastMutatedKey` | Raw demo key of the latest mutation. |
@@ -123,3 +124,5 @@ Then keys include message with value "hi" and a timestamp field exists.
 | 2026-07-18 | CHG-0015-remove-unreachable-apserror-unknownkey-and-jsoncoding-decode-for-issue-15: Remove unreachable APSError.unknownKey and JSONCoding.decode for issue 15 |
 | 2026-07-18 | CHG-0016-loud-torn-filestate-reads-and-document-multi-writer-semantics-for-issue-38: Loud torn FileState reads + multi-writer docs |
 | 2026-07-18 | CHG-0016-loud-torn-filestate-reads-and-document-multi-writer-semantics-for-issue-38: Loud torn FileState reads and document multi-writer semantics for issue 38 |
+| 2026-07-18 | CHG-0022-tty-aware-output-git-porcelain-rule-for-issue-33: TTY-aware output under the git porcelain rule for issue 33 |
+| 2026-07-19 | CHG-0021-tty-aware-output-under-the-git-porcelain-rule-issue-33: TTY-aware output under the git porcelain rule (issue 33) |

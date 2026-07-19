@@ -195,7 +195,7 @@ public final class StateStore {
                 )
             }
         )
-        return try jsonCoding.encodePretty(snapshot)
+        return try jsonCoding.encodeAuto(snapshot)
     }
 
     /// Blocking watch over the `@ObservedDependency` stats service.

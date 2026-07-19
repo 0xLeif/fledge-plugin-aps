@@ -29,6 +29,22 @@ public struct JSONCoding: Sendable {
         }
         return string
     }
+
+    /// TTY-aware JSON (gh rule): pretty when interactive, compact when piped.
+    public func encodeAuto<T: Encodable>(_ value: T) throws -> String {
+        let encoder = JSONEncoder()
+        var formatting: JSONEncoder.OutputFormatting = [.sortedKeys, .withoutEscapingSlashes]
+        if TTY.stdoutIsTTY {
+            formatting.insert(.prettyPrinted)
+        }
+        encoder.outputFormatting = formatting
+        encoder.dateEncodingStrategy = .iso8601
+        let data = try encoder.encode(value)
+        guard let string = String(data: data, encoding: .utf8) else {
+            throw APSError.encodingFailed
+        }
+        return string
+    }
 }
 
 /// Process-local mutation counters dogfooded through `@ObservedDependency`.

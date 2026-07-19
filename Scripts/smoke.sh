@@ -19,25 +19,25 @@ test "$("$bin" --version)" = "0.2.0"
 "$bin" keys | grep -q counter
 "$bin" keys | grep -q profile
 "$bin" keys | grep -q secret
-"$bin" keys --json | grep -q '"key" : "profile"'
-"$bin" keys --json | grep -q '"key" : "secret"'
+"$bin" keys --json | grep -q '"key":"profile"'
+"$bin" keys --json | grep -q '"key":"secret"'
 
 # `set` prints the value; State is process-local so don't expect get in a new process.
 test "$("$bin" set counter 11)" = "11"
 test "$("$bin" set message "smoke")" = "smoke"
-"$bin" set counter 11 --json | grep -q '"value" : 11'
+"$bin" set counter 11 --json | grep -q '"value":11'
 
 # StoredState / FileState must survive process boundaries.
 "$bin" set flag true >/dev/null
 test "$("$bin" get flag)" = "true"
-"$bin" get flag --json | grep -q '"value" : true'
+"$bin" get flag --json | grep -q '"value":true'
 
 "$bin" set note "smoke-note" >/dev/null
 test "$("$bin" get note)" = "smoke-note"
 
 "$bin" set profile '{"name":"smoke","version":2}' >/dev/null
-"$bin" get profile --json | grep -q '"name" : "smoke"'
-"$bin" get profile --json | grep -q '"version" : 2'
+"$bin" get profile --json | grep -q '"name":"smoke"'
+"$bin" get profile --json | grep -q '"version":2'
 
 # SecureState / Keychain smoke temporarily disabled (Keychain prompts / hangs).
 # Re-enable with: APS_SMOKE_SECURESTATE=1
@@ -45,7 +45,7 @@ if [[ "${APS_SMOKE_SECURESTATE:-}" == "1" ]]; then
   if [[ "$(uname -s)" == "Darwin" ]]; then
     "$bin" set secret "smoke-secret" >/dev/null
     test "$("$bin" get secret)" = "smoke-secret"
-    "$bin" get secret --json | grep -q '"storage" : "SecureState"'
+    "$bin" get secret --json | grep -q '"storage":"SecureState"'
     "$bin" reset secret >/dev/null
     test -z "$("$bin" get secret)"
   else
@@ -62,9 +62,9 @@ OTHER="$(mktemp -d "${TMPDIR:-/tmp}/aps-smoke-other.XXXXXX")"
 test "$("$bin" get note --state-dir "$OTHER")" = "other-root"
 test "$("$bin" get note)" = "smoke-note"
 
-"$bin" dump | grep -q '"key" : "flag"'
-"$bin" dump --json | grep -q '"key" : "profile"'
-"$bin" dump --json | grep -q '"key" : "secret"'
+"$bin" dump | grep -q '"key":"flag"'
+"$bin" dump --json | grep -q '"key":"profile"'
+"$bin" dump --json | grep -q '"key":"secret"'
 
 "$bin" reset flag >/dev/null
 test "$("$bin" get flag)" = "false"
@@ -72,7 +72,7 @@ test "$("$bin" get flag)" = "false"
 "$bin" reset note >/dev/null
 test -z "$("$bin" get note)"
 
-"$bin" reset profile --json | grep -q '"reset" : "key"'
+"$bin" reset profile --json | grep -q '"reset":"key"'
 
 "$bin" reset --all >/dev/null
 test "$("$bin" get flag)" = "false"
@@ -82,7 +82,7 @@ test -z "$("$bin" get note)"
 "$bin" watch counter --count 1 --timeout 2 >/dev/null
 
 # ObservedDependency stats command (process-local; fresh process starts at 0).
-"$bin" stats --json | grep -q '"mutationCount" : 0'
+"$bin" stats --json | grep -q '"mutationCount":0'
 "$bin" stats --watch --count 1 --timeout 2 >/dev/null
 
 # Invalid values should fail clearly.
@@ -116,5 +116,18 @@ rm -f "$BADROOT"
 # APS_ERROR_JSON=1 opts into structured errors without --json.
 err="$(APS_ERROR_JSON=1 "$bin" set flag maybe 2>&1 >/dev/null || true)"
 echo "$err" | grep -q '"code":"invalid_value"'
+
+# TTY contract: piped output stays plain (TSV, no ANSI), --quiet prints names only.
+"$bin" keys | grep -q $'KEY\tTYPE'
+if "$bin" keys | grep -q $'\x1b'; then
+  echo "piped keys output must not contain ANSI escapes" >&2
+  exit 1
+fi
+test "$("$bin" keys --quiet | head -1)" = "counter"
+test "$("$bin" keys --quiet | wc -l | tr -d ' ')" = "7"
+
+# JSON is compact when piped (gh rule); --json accepted as --jsonl alias on watch.
+"$bin" dump | grep -q '"key":"flag"'
+"$bin" watch counter --count 1 --timeout 2 --json >/dev/null
 
 echo "smoke ok"
