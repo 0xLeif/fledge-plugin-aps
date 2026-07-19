@@ -3,15 +3,29 @@ import Foundation
 /// Minimal TTY awareness (issue #33, git porcelain rule): pretty for humans
 /// when interactive, frozen plain output when piped. Machine shapes never
 /// carry ANSI; human styling is additive only.
+#if os(Windows)
+import ucrt
+#endif
+
 enum TTY {
     /// True when stdout is a terminal (not a pipe or file).
+    /// Windows uses MSVCRT `_isatty`/`_fileno` (FileHandle.fileDescriptor
+    /// is unavailable there).
     static var stdoutIsTTY: Bool {
-        isatty(FileHandle.standardOutput.fileDescriptor) == 1
+        #if os(Windows)
+        return _isatty(_fileno(stdout)) != 0
+        #else
+        return isatty(FileHandle.standardOutput.fileDescriptor) == 1
+        #endif
     }
 
     /// True when stderr is a terminal.
     static var stderrIsTTY: Bool {
-        isatty(FileHandle.standardError.fileDescriptor) == 1
+        #if os(Windows)
+        return _isatty(_fileno(stderr)) != 0
+        #else
+        return isatty(FileHandle.standardError.fileDescriptor) == 1
+        #endif
     }
 
     /// Color is emitted only on a TTY and never when NO_COLOR is set (any value).

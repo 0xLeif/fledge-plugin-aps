@@ -1,9 +1,9 @@
 {
-  "timestamp": 1784422888,
-  "commit": "c4ecd60b2a46bca4780f1b4af79a1d495d646287",
+  "timestamp": 1784429513,
+  "commit": "69a4f6ea4ddb2cfbdefd87246e96b53e01a85dfa",
   "contract_digest": "bc65bd79c314567ae1552bc3e3e33b38bdfe280db7987e702ac123388b3e0e59",
-  "workspace_digest": "8009885f006b6accb7ae1ca879bb51e79d5ebe39290dcfb55f1418e2eae03995",
-  "acceptance_input_digest": "d9f2e380fb092c289727ec18fcbcc51e790996f5001a9c982c12a6da77a27f90",
+  "workspace_digest": "6da61180d0d4ca0fb27fba39a165056ee137ff239c75a7a6b03d88e6fb105c5d",
+  "acceptance_input_digest": "74a16fa249f701bdaf762713514c61dff234a4e62487e6be9e6f766d8b3c2397",
   "acceptance_manifest": {
     "schema_version": 1,
     "entries": [
@@ -81,8 +81,8 @@
         "path": "Sources/aps/TTY.swift",
         "kind": "file",
         "mode": 33188,
-        "payload_digest": "c27fdaf2de4ced4dd7e3523b14fd017df07676159cb73f186b4cecf783276d29",
-        "entry_digest": "686ac123a2a7a341e96fc01165b64d1dab2afbbb06c0dab7dda531612737de2b",
+        "payload_digest": "c204c058e2632d00d75a67bce0122cda060c9518b5f26aa572a5f4a701983035",
+        "entry_digest": "556cc447fc50013ded3e7eada49a72abac3265c79619d8e6ab26da1f834d4b24",
         "owners": [
           "aps-cli"
         ]
