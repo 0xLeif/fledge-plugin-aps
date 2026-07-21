@@ -6,6 +6,35 @@ Current release line: **1.0.0**. Targets **macOS**, **Linux**, and **Windows** w
 
 This repository is gated by the [CorvidLabs trust toolchain](https://corvidlabs.xyz/integrate/) (fledge, spec-sync, augur, attest). See `AGENTS.md`.
 
+## Install
+
+**Homebrew:**
+
+```bash
+brew install 0xLeif/tap/aps
+```
+
+**fledge plugin** (live-linked from the plugin hub):
+
+```bash
+fledge plugins install https://github.com/0xLeif/fledge-plugin-aps.git
+fledge aps keys --json
+```
+
+**Mint** (builds the SwiftPM executable from source):
+
+```bash
+mint install 0xLeif/aps-cli
+```
+
+**Source** (Swift 6.0+):
+
+```bash
+git clone https://github.com/0xLeif/aps-cli.git
+cd aps-cli && swift build -c release
+.build/release/aps --help
+```
+
 ## Commands
 
 ```text
@@ -73,7 +102,7 @@ aps key list --json
 - Swift 6.0+
 - macOS 14+ (primary CI on `macos-latest`). Linux smoke runs on `ubuntu-latest`. Windows smoke runs on `windows-latest` via `Scripts/smoke.ps1`.
 - For the trust gate locally: [corvid-trust](https://github.com/CorvidLabs/trust) (`brew install CorvidLabs/tap/corvid-trust`)
-- SpecSync **5.1.1** (see `.specsync/version`). Trust CI mirrors that exact release; brew `spec-sync` latest should match.
+- SpecSync **5.2.0** (see `.specsync/version`). Trust CI mirrors that exact release; brew `spec-sync` latest should match.
 
 ## Build and run
 
@@ -92,7 +121,7 @@ fledge lanes run verify
 
 ### Fledge plugin shim
 
-This repo ships a root `plugin.toml` so fledge can install `aps` as a live-linked plugin (`fledge-plugin-aps` v1.0.0 tracks the CLI version). Publishing to the plugin hub stays on the go-public checklist ([#40](https://github.com/0xLeif/aps-cli/issues/40)).
+This repo ships a root `plugin.toml` so fledge can install `aps` as a live-linked plugin (`fledge-plugin-aps` v1.0.0 tracks the CLI version). Published on the plugin hub at [0xLeif/fledge-plugin-aps](https://github.com/0xLeif/fledge-plugin-aps).
 
 ```bash
 # From a clone of aps-cli:
@@ -219,9 +248,9 @@ pwsh ./Scripts/smoke.ps1
 | `.trust.toml` | Unified Trust policy |
 | `.augur.toml` | Diff-risk thresholds |
 | `.attest.json` | Provenance policy |
-| `.specsync/` | SpecSync 5.1.1 config + SDD change tracking (`.specsync/version`) |
+| `.specsync/` | SpecSync 5.2.0 config + SDD change tracking (`.specsync/version`) |
 | `specs/` | Module contracts (`aps-cli`, `state-store`) |
-| `GOAL.md` | Active 1.0 milestone checklist |
+| `GOAL.md` | Shipped 1.0.0 release record |
 | `AGENTS.md` | Standing rules (managed block required by CI) |
 
 ```bash
@@ -240,12 +269,13 @@ docs/design/
 Scripts/smoke.sh
 Scripts/smoke.ps1
 GOAL.md
-.github/workflows/{ci,linux-smoke,windows-smoke,trust}.yml
+LICENSE
+.github/workflows/{ci,linux-smoke,windows-smoke,trust,release,post-release-formula}.yml
 ```
 
 ## Next goal
 
-Prep for **1.0.0** is in progress (see [`GOAL.md`](GOAL.md)). Release-day go-public steps remain on [#40](https://github.com/0xLeif/aps-cli/issues/40).
+**1.0.0** is shipped and public: [release v1.0.0](https://github.com/0xLeif/aps-cli/releases/tag/v1.0.0), [`GOAL.md`](GOAL.md) record, go-public checklist [#40](https://github.com/0xLeif/aps-cli/issues/40). Next steps live in the [issue backlog](https://github.com/0xLeif/aps-cli/issues), starting with release binaries and the Homebrew tap formula ([#68](https://github.com/0xLeif/aps-cli/issues/68)).
 
 
 ## AppState surface coverage
@@ -259,9 +289,9 @@ Prep for **1.0.0** is in progress (see [`GOAL.md`](GOAL.md)). Release-day go-pub
 | `Slice` | `profileName` | Dogfooded |
 | `@AppDependency` | `clock`, `jsonCoding` | Dogfooded |
 | `@ObservedDependency` | `stats` / `aps stats` | Dogfooded |
-| `SyncState` | — | No-go ([spike](docs/spikes/syncstate-feasibility.md)) |
-| `ModelState` | — | No-go ([spike](docs/spikes/modelstate-feasibility.md)) |
-| OptionalSlice / DependencySlice | — | Not planned |
+| `SyncState` | - | No-go ([spike](docs/spikes/syncstate-feasibility.md)) |
+| `ModelState` | - | No-go ([spike](docs/spikes/modelstate-feasibility.md)) |
+| OptionalSlice / DependencySlice | - | Not planned |
 
 ## Non-goals
 
@@ -274,7 +304,7 @@ Audit findings and per-OS gaps live in [`docs/windows-readiness.md`](docs/window
 
 ## Design
 
-- Dynamic / user-defined keys: [`docs/design/dynamic-schema.md`](docs/design/dynamic-schema.md) (issues [#39](https://github.com/0xLeif/aps-cli/issues/39), [#62](https://github.com/0xLeif/aps-cli/issues/62)–[#64](https://github.com/0xLeif/aps-cli/issues/64))
+- Dynamic / user-defined keys: [`docs/design/dynamic-schema.md`](docs/design/dynamic-schema.md) (issues [#39](https://github.com/0xLeif/aps-cli/issues/39), [#62](https://github.com/0xLeif/aps-cli/issues/62)-[#64](https://github.com/0xLeif/aps-cli/issues/64))
 - Go-public checklist: [#40](https://github.com/0xLeif/aps-cli/issues/40)
 
 ## Related

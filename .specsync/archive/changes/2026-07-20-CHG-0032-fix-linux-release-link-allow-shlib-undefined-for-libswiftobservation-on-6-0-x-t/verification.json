@@ -1,0 +1,41 @@
+{
+  "timestamp": 1784520874,
+  "commit": "059f44132ee1a840c143a0e62b0ded1b66ad4974",
+  "contract_digest": "2a433ff11dbfaeaf1801ff7478bbd98c5ca9becc6283ad82608ea96c3380566f",
+  "workspace_digest": "96f1e30631b874e7c1d199149babbc80a70728f31d400c4a18c27112cb2ccac6",
+  "acceptance_input_digest": "090c85ff29febc2176dec8926b773c73a549125ccfcb3e220b34b117af22740d",
+  "acceptance_manifest": {
+    "schema_version": 1,
+    "entries": [
+      {
+        "path": ".github/workflows/release.yml",
+        "kind": "file",
+        "mode": 33188,
+        "payload_digest": "63559fb6518ad68070b9665f44d065e174918f131bb7cbac02df086d24ea34b3",
+        "entry_digest": "3e4dbc4f7b2b1e57a9f224b3571054bc40021f8f1184b1579cec154e76386d7c",
+        "owners": [
+          "@exact:delivery"
+        ]
+      },
+      {
+        "path": ".specsync/change-sequence.json",
+        "kind": "file",
+        "mode": 33188,
+        "payload_digest": "79457cd7a5b8f8a4c4920905aae6c9b712d41400c0531e77e3d1305e6f37efc8",
+        "entry_digest": "68d94d8d15643190a41e3f011b3a8eddb8de4f92159272d0e6fe19b286b61481",
+        "owners": [
+          "@exact:delivery"
+        ]
+      }
+    ]
+  },
+  "passed": true,
+  "commands": [
+    {
+      "command": "fledge lanes run verify",
+      "success": true,
+      "exit_code": 0
+    }
+  ],
+  "requirement_ids": []
+}

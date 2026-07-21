@@ -19,6 +19,14 @@ fledge trust verify       # full trust gate when tools are installed
 ./Scripts/smoke.sh
 ```
 
+## Dogfooding aps
+
+Use the tool itself for agent state on this project: `fledge aps` (live-linked
+plugin) or `aps` from the tap. Persist working/session state in the default
+state root (`~/.aps`) with `aps key add` + `set`/`get` instead of scratch
+files. Leave the demo keys for tests and smoke; add your own keys for real
+state (see `docs/design/dynamic-schema.md`).
+
 ## Multi-agent ticket claiming
 
 Multiple agents (Kimi, Cursor, others) work GitHub issues autonomously in
@@ -40,8 +48,17 @@ Rules:
    and claim label into each subagent prompt.
 5. Remove your label when the implementing PR is open or when you stop work,
    and link the outcome so another agent can take it.
-6. Prefer unclaimed open issues. Do not strip another agent's claim label.
-7. If your `agent:<name>` label does not exist, create it with a description
+6. After the implementing PR merges, archive its SpecSync change:
+   `specsync change archive <id>` from a clean main-based checkout, pushed
+   as a small housekeeping PR. Archive moves are exempt from SDD coverage
+   (`.specsync/changes/` and `.specsync/archive/` sit in `ignored_paths`),
+   so the housekeeping PR needs no covering change. The archive preflight
+   needs an empty delivery diff vs `origin/main` and the pinned specsync
+   release (`.specsync/version`; 5.2.0+ understands squash-merged
+   evidence). `accepted` is not the terminal state; do not let accepted
+   changes pile up in `.specsync/changes/`.
+7. Prefer unclaimed open issues. Do not strip another agent's claim label.
+8. If your `agent:<name>` label does not exist, create it with a description
    of the form "Ticket claimed by <name>".
 
 ### Worktrees for parallel agents
